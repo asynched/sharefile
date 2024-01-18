@@ -1,9 +1,9 @@
 import { user } from 'src/shared/auth'
+import { files, folders } from 'src/data'
 
-import { FolderOpenIcon } from '@heroicons/react/24/outline'
 import FolderCard from 'src/components/cards/folders/FolderCard'
 import DashboardLayout from 'src/layouts/DashboardLayout'
-import { files, folders } from 'src/data'
+import FileCard from 'src/components/cards/files/FileCard'
 
 export default function Dashboard() {
   return (
@@ -55,18 +55,8 @@ export default function Dashboard() {
         </h2>
         <ul className="grid gap-4">
           {files.map((file) => (
-            <li
-              key={file.id}
-              className="text-zinc-400 text-sm grid grid-cols-8 p-4 border border-zinc-900 rounded-lg"
-            >
-              <p className="flex gap-2 items-center col-span-4">
-                <FolderOpenIcon className="w-4 h-4" />
-                <span>{file.name}</span>
-              </p>
-              <p>{file.folder}</p>
-              <p>{(file.size / 1024).toFixed(2)}MB</p>
-              <p>{file.createdAt.toLocaleDateString()}</p>
-              <p>{file.updatedAt.toLocaleDateString()}</p>
+            <li key={file.id}>
+              <FileCard file={file} />
             </li>
           ))}
         </ul>

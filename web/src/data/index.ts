@@ -1,6 +1,6 @@
-import { Folder } from 'src/domain/entities'
+import { AppFile, AppFolder } from 'src/domain/entities'
 
-export const folders: Folder[] = [
+export const folders: AppFolder[] = [
   {
     id: crypto.randomUUID(),
     public: false,
@@ -35,7 +35,7 @@ export const folders: Folder[] = [
   },
 ]
 
-export const files = [
+export const files: AppFile[] = [
   {
     id: crypto.randomUUID(),
     name: 'history.pdf',

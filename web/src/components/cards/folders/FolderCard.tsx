@@ -3,10 +3,10 @@ import {
   ClipboardIcon,
 } from '@heroicons/react/24/outline'
 import { Link } from 'react-router-dom'
-import { Folder } from 'src/domain/entities'
+import { AppFolder } from 'src/domain/entities'
 
 export type FolderCardProps = {
-  folder: Folder
+  folder: AppFolder
 }
 
 const gradients = [
@@ -53,7 +53,7 @@ export default function FolderCard({ folder }: FolderCardProps) {
           </p>
           <div className="flex flex-col gap-2 text-zinc-300">
             <Link
-              to={`/albums/${folder.id}`}
+              to={`/dashboard/folders/${folder.id}`}
               className="flex gap-1 items-center"
             >
               <ArrowTopRightOnSquareIcon className="h-4 w-4" />
@@ -62,6 +62,9 @@ export default function FolderCard({ folder }: FolderCardProps) {
             <button className="flex gap-1 items-center">
               <ClipboardIcon className="h-4 w-4" />
               <span>Copy link</span>
+            </button>
+            <button className="flex items-center justify-center gap-1 text-sm border border-zinc-600 py-1 rounded transition ease-in-out hover:bg-red-600 hover:border-red-600 hover:text-white">
+              <span>Delete</span>
             </button>
           </div>
         </div>
