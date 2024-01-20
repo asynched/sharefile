@@ -3,7 +3,9 @@ import {
   ClipboardIcon,
 } from '@heroicons/react/24/outline'
 import { Link } from 'react-router-dom'
+import ConfirmDeleteFolderModal from 'src/components/modals/folders/ConfirmDeleteFolderModal'
 import { AppFolder } from 'src/domain/entities'
+import { useToggle } from 'src/hooks/useToggle'
 
 export type FolderCardProps = {
   folder: AppFolder
@@ -32,8 +34,17 @@ function hash(source: string): number {
 }
 
 export default function FolderCard({ folder }: FolderCardProps) {
+  const { toggle, next } = useToggle()
+
   return (
     <div className="border border-zinc-900 rounded-lg overflow-hidden">
+      {toggle && (
+        <ConfirmDeleteFolderModal
+          folderId={folder.id}
+          onDelete={next}
+          onClose={next}
+        />
+      )}
       <div
         className={`h-16 bg-gradient-to-br ${
           gradients[hash(folder.id) % gradients.length]
@@ -63,7 +74,10 @@ export default function FolderCard({ folder }: FolderCardProps) {
               <ClipboardIcon className="h-4 w-4" />
               <span>Copy link</span>
             </button>
-            <button className="flex items-center justify-center gap-1 text-sm border border-zinc-600 py-1 rounded transition ease-in-out hover:bg-red-600 hover:border-red-600 hover:text-white">
+            <button
+              onClick={next}
+              className="flex items-center justify-center gap-1 text-sm border border-zinc-600 py-1 rounded transition ease-in-out hover:bg-red-600 hover:border-red-600 hover:text-white"
+            >
               <span>Delete</span>
             </button>
           </div>

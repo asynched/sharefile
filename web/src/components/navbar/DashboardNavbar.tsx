@@ -5,10 +5,12 @@ import {
   HomeIcon,
 } from '@heroicons/react/24/outline'
 import { Link, useNavigate } from 'react-router-dom'
-import { user } from 'src/shared/auth'
+import { useStore } from 'src/hooks/useStore'
+import { auth } from 'src/stores/auth'
 
 export default function DashboardNavbar() {
   const navigate = useNavigate()
+  const user = useStore(auth)!
 
   return (
     <nav className="flex flex-col w-72 border-r border-zinc-900">
@@ -49,14 +51,14 @@ export default function DashboardNavbar() {
       </div>
       <div className="mt-auto py-3 px-3 border-t border-zinc-900 flex items-center gap-2">
         <img
-          src={`https://api.dicebear.com/7.x/initials/svg?seed=${user.name}`}
+          src={`https://api.dicebear.com/7.x/initials/svg?seed=${user.firstName}`}
           className="w-10 h-10 rounded-full"
           alt="User avatar"
         />
         <div className="flex items-center gap-2 justify-between w-full">
           <div>
             <p>
-              {user.name}{' '}
+              {user.firstName} {user.lastName}
               <span className="text-xs text-zinc-400">({user.tier})</span>
             </p>
             <p className="text-sm text-zinc-400">{user.email}</p>

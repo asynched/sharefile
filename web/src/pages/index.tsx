@@ -14,17 +14,17 @@ export default function Home() {
             Share<span className="text-yellow-500">File</span>
           </h1>
           <div className="flex gap-2">
-            <Link className="hover:underline" to="/">
+            <Link className="hover:underline" to="/auth/sign-up">
               Sign up
             </Link>
-            <Link className="text-yellow-500 underline" to="/">
+            <Link className="text-yellow-500 underline" to="/auth/sign-in">
               Log in
             </Link>
           </div>
         </div>
       </header>
-      <main className="px-4 lg:px-0 mb-8 max-w-screen-lg mx-auto">
-        <section className="py-24 lg:py-48 flex flex-col items-center">
+      <main className="px-4 lg:px-0 pb-12 max-w-screen-lg mx-auto">
+        <section className="py-24 lg:py-32 flex flex-col items-center">
           <h1 className="text-6xl font-bold tracking-tighter">
             Share<span className="text-yellow-500">File</span>
           </h1>

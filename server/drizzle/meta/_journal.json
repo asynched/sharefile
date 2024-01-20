@@ -1,0 +1,27 @@
+{
+  "version": "5",
+  "dialect": "sqlite",
+  "entries": [
+    {
+      "idx": 0,
+      "version": "5",
+      "when": 1705601597949,
+      "tag": "0000_windy_mojo",
+      "breakpoints": true
+    },
+    {
+      "idx": 1,
+      "version": "5",
+      "when": 1705611403133,
+      "tag": "0001_shiny_slapstick",
+      "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "5",
+      "when": 1705617207345,
+      "tag": "0002_stale_star_brand",
+      "breakpoints": true
+    }
+  ]
+}

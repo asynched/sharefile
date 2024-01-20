@@ -1,5 +1,7 @@
 import { FolderOpenIcon } from '@heroicons/react/24/outline'
+import { Link } from 'react-router-dom'
 import { AppFile } from 'src/domain/entities'
+import { toFileSize } from 'src/utils/math'
 
 export type FileCardProps = {
   file: AppFile
@@ -10,10 +12,17 @@ export default function FileCard({ file }: FileCardProps) {
     <div className="text-zinc-400 text-sm grid grid-cols-8 p-4 border border-zinc-900 rounded-lg">
       <p className="flex gap-2 items-center col-span-4">
         <FolderOpenIcon className="w-4 h-4" />
-        <span>{file.name}</span>
+        <a href={file.url} target="_blank" className="hover:underline">
+          {file.name}
+        </a>
       </p>
-      <p>{file.folder}</p>
-      <p>{(file.size / 1024).toFixed(2)}MB</p>
+      <Link
+        to={`/dashboard/folders/${file.folderId}`}
+        className="hover:underline"
+      >
+        {file.folder}
+      </Link>
+      <p>{toFileSize(file.size)}</p>
       <p>{file.createdAt.toLocaleDateString()}</p>
       <p>{file.updatedAt.toLocaleDateString()}</p>
     </div>
