@@ -6,11 +6,17 @@ import {
 } from '@heroicons/react/24/outline'
 import { Link, useNavigate } from 'react-router-dom'
 import { useStore } from 'src/hooks/useStore'
+import { setToken } from 'src/services/api/auth'
 import { auth } from 'src/stores/auth'
 
 export default function DashboardNavbar() {
   const navigate = useNavigate()
   const user = useStore(auth)!
+
+  const handleSignOut = () => {
+    setToken(null)
+    navigate('/')
+  }
 
   return (
     <nav className="flex flex-col w-72 border-r border-zinc-900">
@@ -63,7 +69,7 @@ export default function DashboardNavbar() {
             </p>
             <p className="text-sm text-zinc-400">{user.email}</p>
           </div>
-          <button aria-label="Sign out" onClick={() => navigate('/')}>
+          <button aria-label="Sign out" onClick={handleSignOut}>
             <ArrowLeftEndOnRectangleIcon className="w-6 h-6" />
           </button>
         </div>

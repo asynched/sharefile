@@ -1,15 +1,17 @@
 import { and, desc, eq, sum } from 'drizzle-orm'
 import { Hono } from 'hono'
 import { HTTPException } from 'hono/http-exception'
-import { MAX_USER_STORAGE_IN_BYTES } from 'src/@types/globals'
+import { MAX_USER_STORAGE_IN_BYTES } from 'src/config/globals'
+import { db } from 'src/database/client'
 import { files } from 'src/database/schema/files'
 import { folders } from 'src/database/schema/folders'
 import { authenticated } from 'src/modules/auth/middlewares'
+import { storage } from 'src/services/storage'
 
-export const router = new Hono<HonoContext>()
+export const router = new Hono()
 
 router.get('/latest', authenticated, async (c) => {
-  const rows = await c.env.db
+  const rows = await db
     .select({
       id: files.id,
       name: files.name,
@@ -31,7 +33,7 @@ router.get('/latest', authenticated, async (c) => {
 })
 
 router.get('/:folderId', authenticated, async (c) => {
-  const rows = await c.env.db
+  const rows = await db
     .select({
       id: files.id,
       name: files.name,
@@ -51,6 +53,7 @@ router.get('/:folderId', authenticated, async (c) => {
       )
     )
     .innerJoin(folders, eq(files.folderId, folders.id))
+    .orderBy(desc(files.updatedAt))
 
   return c.json(rows)
 })
@@ -68,7 +71,7 @@ router.post('/:folderId', authenticated, async (c) => {
 
   const totalSize = archives.reduce((acc, file) => acc + file.size, 0)
 
-  const used = await c.env.db
+  const used = await db
     .select({
       used: sum(files.size),
     })
@@ -89,7 +92,7 @@ router.post('/:folderId', authenticated, async (c) => {
 
   const urls = await Promise.all(
     archives.map((file) =>
-      c.env.storage.upload({
+      storage.upload({
         file: file,
         name: file.name,
         folder: `uploads/users/${c.var.userId}`,
@@ -99,7 +102,7 @@ router.post('/:folderId', authenticated, async (c) => {
     )
   )
 
-  const rows = await c.env.db
+  const rows = await db
     .insert(files)
     .values(
       archives.map((file, i) => ({
@@ -116,7 +119,7 @@ router.post('/:folderId', authenticated, async (c) => {
 })
 
 router.delete('/:folderId/:fileId', authenticated, async (c) => {
-  const [file] = await c.env.db
+  const [file] = await db
     .select({
       url: files.url,
     })
@@ -135,7 +138,7 @@ router.delete('/:folderId/:fileId', authenticated, async (c) => {
     })
   }
 
-  const rows = await c.env.db
+  const rows = await db
     .delete(files)
     .where(
       and(
@@ -146,7 +149,7 @@ router.delete('/:folderId/:fileId', authenticated, async (c) => {
     )
     .returning()
 
-  await c.env.storage.delete(file.url)
+  await storage.delete(file.url)
 
   return c.json(rows)
 })

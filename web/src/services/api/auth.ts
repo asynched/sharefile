@@ -81,3 +81,23 @@ export async function getProfile() {
 
   return profile
 }
+
+type UpdateProfileDto = {
+  firstName: string
+  lastName: string
+  email: string
+}
+
+export async function updateProfile(data: UpdateProfileDto) {
+  const response = await fetch(`${API_URL}/auth/profile`, {
+    method: 'PATCH',
+    headers: authHeaders({
+      'Content-Type': 'application/json',
+    }),
+    body: JSON.stringify(data),
+  })
+
+  if (!response.ok) {
+    throw new Error('Error updating profile')
+  }
+}

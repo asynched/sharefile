@@ -28,7 +28,7 @@ export class Logger {
       args = String(info)
     }
 
-    const log = `date="${date}" app=${this.prefix} level=${level} message="${message}" ${args}`
+    const log = `date="${date}" app="${this.prefix}" level="${level}" message="${message}" ${args}`
 
     if (level === 'error') console.error(log)
     else if (level === 'warn') console.warn(log)

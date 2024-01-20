@@ -4,10 +4,10 @@ import { router as auth } from 'src/modules/auth/routes'
 import { router as folders } from 'src/modules/folders/routes'
 import { router as statistics } from 'src/modules/statistics/routes'
 import { router as files } from 'src/modules/files/routes'
-import { useDatabase, useStorage } from 'src/config/middlewares'
+import { logger } from 'src/services/logger'
 
 const app = new Hono()
-  .use('*', cors(), useDatabase, useStorage)
+  .use('*', cors())
   .get('/health', (c) =>
     c.json({
       status: 'up',
@@ -19,4 +19,9 @@ const app = new Hono()
   .route('/statistics', statistics)
   .route('/files', files)
 
-export default app
+Bun.serve({
+  port: 8787,
+  fetch: app.fetch,
+})
+
+logger.info('Server started', { port: 8787 })

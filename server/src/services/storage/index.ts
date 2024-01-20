@@ -1,4 +1,13 @@
-import { put, del } from '@vercel/blob'
+import { initializeApp } from 'firebase/app'
+import {
+  type FirebaseStorage as IFirebaseStorage,
+  deleteObject,
+  getDownloadURL,
+  getStorage,
+  ref,
+  uploadBytes,
+} from 'firebase/storage'
+import { env } from 'src/config/env'
 
 type UploadOptions = {
   folder: string
@@ -12,29 +21,39 @@ export interface Storage {
   delete(urls: string | string[]): Promise<void>
 }
 
-export class VercelStorage implements Storage {
-  constructor(private readonly token: string) {
-    this.token = token
-  }
+export class FirebaseStorage implements Storage {
+  constructor(private readonly storage: IFirebaseStorage) {}
 
-  async delete(urls: string | string[]) {
+  async delete(urls: string | string[]): Promise<void> {
     if (urls.length === 0) return
 
-    await del(urls, {
-      token: this.token,
-    })
+    if (typeof urls === 'string') {
+      urls = [urls]
+    }
+
+    await Promise.all(urls.map((url) => deleteObject(ref(this.storage, url))))
   }
 
-  async upload(options: UploadOptions) {
+  async upload(options: UploadOptions): Promise<string> {
     const path = `${options.folder}/${options.name}`
+    const fileRef = ref(this.storage, path)
 
-    const { url } = await put(path, options.file, {
-      // TODO: Allow for private uploads
-      access: 'public',
+    await uploadBytes(fileRef, await options.file.arrayBuffer(), {
       contentType: options.file.type,
-      token: this.token,
     })
 
-    return url
+    return getDownloadURL(fileRef)
   }
 }
+
+const app = initializeApp({
+  apiKey: env.FIREBASE_API_KEY,
+  authDomain: env.FIREBASE_AUTH_DOMAIN,
+  projectId: env.FIREBASE_PROJECT_ID,
+  storageBucket: env.FIREBASE_STORAGE_BUCKET,
+  messagingSenderId: env.FIREBASE_MESSAGING_SENDER_ID,
+  appId: env.FIREBASE_APP_ID,
+  measurementId: env.FIREBASE_MEASUREMENT_ID,
+})
+
+export const storage: Storage = new FirebaseStorage(getStorage(app))

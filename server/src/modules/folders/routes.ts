@@ -2,16 +2,18 @@ import { zValidator } from '@hono/zod-validator'
 import { and, desc, eq } from 'drizzle-orm'
 import { Hono } from 'hono'
 import { HTTPException } from 'hono/http-exception'
+import { db } from 'src/database/client'
 import { files } from 'src/database/schema/files'
 import { folders } from 'src/database/schema/folders'
 import { authenticated } from 'src/modules/auth/middlewares'
 import { logger } from 'src/services/logger'
+import { storage } from 'src/services/storage'
 import { TypeOf, z } from 'zod'
 
-export const router = new Hono<HonoContext>()
+export const router = new Hono()
 
 router.get('/', authenticated, async (c) => {
-  const rows = await c.env.db
+  const rows = await db
     .select()
     .from(folders)
     .where(eq(folders.userId, c.var.userId))
@@ -21,7 +23,7 @@ router.get('/', authenticated, async (c) => {
 })
 
 router.get('/:id', authenticated, async (c) => {
-  const [folder] = await c.env.db
+  const [folder] = await db
     .select()
     .from(folders)
     .where(
@@ -46,7 +48,7 @@ router.post('/', authenticated, zValidator('json', createFolder), async (c) => {
   try {
     const data = c.req.valid('json') as TypeOf<typeof createFolder>
 
-    const [folder] = await c.env.db
+    const [folder] = await db
       .insert(folders)
       .values({
         name: data.name,
@@ -75,7 +77,7 @@ router.put(
     try {
       const data = c.req.valid('json') as TypeOf<typeof updateFolder>
 
-      const [folder] = await c.env.db
+      const [folder] = await db
         .update(folders)
         .set({
           name: data.name,
@@ -103,7 +105,7 @@ const delay = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms))
 router.patch('/:id/visibility', authenticated, async (c) => {
   await delay(1_000)
 
-  const [folder] = await c.env.db
+  const [folder] = await db
     .select()
     .from(folders)
     .where(
@@ -117,7 +119,7 @@ router.patch('/:id/visibility', authenticated, async (c) => {
     })
   }
 
-  await c.env.db
+  await db
     .update(folders)
     .set({
       public: folder.public ? false : true,
@@ -137,7 +139,7 @@ router.delete('/:id', authenticated, async (c) => {
     }
   )
 
-  const urls = await c.env.db
+  const urls = await db
     .select({ url: files.url })
     .from(files)
     .where(
@@ -145,16 +147,16 @@ router.delete('/:id', authenticated, async (c) => {
     )
     .then((rows) => rows.map((row) => row.url))
 
-  await c.env.db
+  await db
     .delete(files)
     .where(
       and(eq(files.userId, c.var.userId), eq(files.folderId, c.req.param('id')))
     )
     .returning()
 
-  await c.env.storage.delete(urls)
+  await storage.delete(urls)
 
-  await c.env.db
+  await db
     .delete(folders)
     .where(
       and(eq(folders.userId, c.var.userId), eq(folders.id, c.req.param('id')))

@@ -8,6 +8,8 @@ import FolderCard from 'src/components/cards/folders/FolderCard'
 import DashboardLayout from 'src/layouts/DashboardLayout'
 import FileCard from 'src/components/cards/files/FileCard'
 import { FolderIcon } from '@heroicons/react/24/outline'
+import { MAX_USER_STORAGE_IN_BYTES } from 'src/config/env'
+import { Link } from 'react-router-dom'
 
 export default function Dashboard() {
   const user = useStore(auth)!
@@ -24,6 +26,7 @@ export default function Dashboard() {
       files: 0,
       access: 0,
       storage: 0,
+      folders: 0,
     },
   })
 
@@ -59,8 +62,10 @@ export default function Dashboard() {
           <li className="p-4 border border-zinc-900 rounded-lg">
             <p>Storage used</p>
             <h2 className="text-2xl font-bold tracking-tighter">
-              {toFileSize(stats.storage)} of 128MB (
-              {percentage(stats.storage, 1_048_576).toFixed(2)}%)
+              {toFileSize(stats.storage)} of{' '}
+              {toFileSize(MAX_USER_STORAGE_IN_BYTES)} (
+              {percentage(stats.storage, MAX_USER_STORAGE_IN_BYTES).toFixed(2)}
+              %)
             </h2>
           </li>
         </ul>
@@ -69,13 +74,30 @@ export default function Dashboard() {
         <h2 className="mb-4 text-3xl font-bold tracking-tighter">
           Latest folders
         </h2>
-        <ul className="grid grid-cols-4 gap-4">
-          {folders.map((folder) => (
-            <li key={folder.id}>
-              <FolderCard folder={folder} />
-            </li>
-          ))}
-        </ul>
+        {folders.length === 0 && (
+          <div className="p-8 border-2 border-dashed border-zinc-900 rounded flex items-center justify-center gap-1">
+            <FolderIcon className="w-5 h-5" />
+            <p className="text-zinc-400">
+              No folders available,{' '}
+              <Link
+                className="text-white hover:underline"
+                to="/dashboard/folders"
+              >
+                create one here
+              </Link>
+              .
+            </p>
+          </div>
+        )}
+        {folders.length > 0 && (
+          <ul className="grid grid-cols-4 gap-4">
+            {folders.map((folder) => (
+              <li key={folder.id}>
+                <FolderCard folder={folder} />
+              </li>
+            ))}
+          </ul>
+        )}
       </section>
       <section>
         <h2 className="mb-4 text-3xl font-bold tracking-tighter">

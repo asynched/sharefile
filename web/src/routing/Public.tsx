@@ -1,9 +1,7 @@
-import { useQuery } from '@tanstack/react-query'
-import { ReactNode, useEffect } from 'react'
+import { ReactNode, useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { api } from 'src/services/api'
 import { auth } from 'src/stores/auth'
-import { inspect } from 'src/utils/functional'
 
 export type PublicProps = {
   children: ReactNode
@@ -16,26 +14,28 @@ export default function Public({
   onLoading,
   redirectTo = '/dashboard',
 }: PublicProps) {
-  const { data, isLoading } = useQuery({
-    queryKey: ['profile'],
-    queryFn: () => api.auth.getProfile().then(inspect(auth.set)),
-  })
-
+  const [state, setState] = useState<'pending' | 'success' | 'error'>('pending')
   const navigate = useNavigate()
 
   useEffect(() => {
-    if (!!data) {
-      navigate(redirectTo)
-    }
-  }, [data])
+    api.auth
+      .getProfile()
+      .then((profile) => {
+        auth.set(profile)
+        setState('success')
+        navigate(redirectTo)
+      })
+      .catch(() => {
+        auth.set(null)
+        setState('error')
+      })
+  }, [])
 
-  if (isLoading) {
-    return <>{onLoading}</>
+  if (state === 'pending') return onLoading
+
+  if (state === 'error') {
+    return children
   }
 
-  if (data) {
-    return null
-  }
-
-  return <>{children}</>
+  return null
 }

@@ -1,9 +1,7 @@
-import { useQuery } from '@tanstack/react-query'
-import { ReactNode, useEffect } from 'react'
+import { ReactNode, useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { api } from 'src/services/api'
 import { auth } from 'src/stores/auth'
-import { inspect } from 'src/utils/functional'
 
 export type PrivateProps = {
   children: ReactNode
@@ -17,22 +15,25 @@ export default function Private({
   redirectTo = '/',
 }: PrivateProps) {
   const navigate = useNavigate()
-  const { isLoading, error } = useQuery({
-    queryKey: ['profile'],
-    queryFn: () => api.auth.getProfile().then(inspect(auth.set)),
-  })
+  const [state, setState] = useState<'pending' | 'success' | 'error'>('pending')
 
   useEffect(() => {
-    if (!!error) {
-      navigate(redirectTo)
-    }
-  }, [error])
+    api.auth
+      .getProfile()
+      .then((profile) => {
+        auth.set(profile)
+        setState('success')
+      })
+      .catch(() => {
+        auth.set(null)
+        setState('error')
+        navigate(redirectTo)
+      })
+  }, [])
 
-  if (isLoading) {
-    return <>{onLoading}</>
-  }
+  if (state === 'pending') return onLoading
 
-  if (error) {
+  if (state === 'error') {
     return null
   }
 

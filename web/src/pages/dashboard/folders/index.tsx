@@ -36,13 +36,27 @@ export default function DashboardFolder() {
             <span>Create</span>
           </button>
         </div>
-        <ul className="grid grid-cols-4 gap-4">
-          {folders.map((folder) => (
-            <li key={folder.id}>
-              <FolderCard folder={folder} />
-            </li>
-          ))}
-        </ul>
+        {folders.length === 0 && (
+          <div className="p-8 border-2 border-dashed border-zinc-900 rounded flex items-center justify-center gap-1">
+            <FolderIcon className="w-5 h-5" />
+            <p className="text-zinc-400">
+              No folders available,{' '}
+              <button onClick={next} className="text-white hover:underline">
+                create one here
+              </button>
+              .
+            </p>
+          </div>
+        )}
+        {folders.length > 0 && (
+          <ul className="grid grid-cols-4 gap-4">
+            {folders.map((folder) => (
+              <li key={folder.id}>
+                <FolderCard folder={folder} />
+              </li>
+            ))}
+          </ul>
+        )}
       </section>
 
       <section>
