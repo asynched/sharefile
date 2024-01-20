@@ -37,7 +37,7 @@ export default function Dashboard() {
   })
 
   return (
-    <DashboardLayout>
+    <DashboardLayout title="ShareFile | Dashboard">
       <section className="mb-8">
         <h1 className="text-4xl font-bold tracking-tighter">
           Welcome, {user?.firstName}!

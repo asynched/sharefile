@@ -1,6 +1,7 @@
 import { useMutation } from '@tanstack/react-query'
 import { Link, useNavigate } from 'react-router-dom'
 import Spinner from 'src/components/spinners/Spinner'
+import Title from 'src/components/utils/Title'
 import { useForm } from 'src/hooks/useForm'
 import { api } from 'src/services/api'
 import { setToken } from 'src/services/api/auth'
@@ -20,6 +21,7 @@ export default function SignIn() {
 
   return (
     <div className="w-full h-screen grid place-items-center">
+      <Title title="ShareFile | Sign in" />
       <div className="max-w-[432px] p-8 rounded-lg border border-zinc-800">
         <h1 className="text-4xl font-bold tracking-tighter text-center">
           Share<span className="text-yellow-500">File</span>

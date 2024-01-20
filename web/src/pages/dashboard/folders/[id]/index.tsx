@@ -63,7 +63,9 @@ export default function DashboardFolderDetail() {
   }
 
   return (
-    <DashboardLayout>
+    <DashboardLayout
+      title={folder ? `ShareFile | ${folder.name}` : `ShareFile | Folder`}
+    >
       {folder && fileModal && (
         <CreateFileModal folderId={folder.id} onClose={toggleFileModal} />
       )}

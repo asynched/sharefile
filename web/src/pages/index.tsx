@@ -4,10 +4,12 @@ import {
   ShareIcon,
 } from '@heroicons/react/24/outline'
 import { Link } from 'react-router-dom'
+import Title from 'src/components/utils/Title'
 
 export default function Home() {
   return (
     <div className="h-screen flex flex-col">
+      <Title title="ShareFile | Share files online" />
       <header className="py-2 border-b border-zinc-900">
         <div className="px-4 lg:px-0 max-w-screen-lg mx-auto flex items-center justify-between">
           <h1 className="text-2xl font-bold tracking-tighter">

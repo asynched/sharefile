@@ -23,7 +23,7 @@ export default function DashboardFolder() {
   })
 
   return (
-    <DashboardLayout>
+    <DashboardLayout title="ShareFile | Folders">
       {toggle && <CreateFolderModal onClose={next} onSuccess={next} />}
       <section className="mb-8">
         <div className="mb-4 flex items-center justify-between">

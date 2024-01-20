@@ -40,7 +40,7 @@ export default function Settings() {
   }, [stats.storage])
 
   return (
-    <DashboardLayout>
+    <DashboardLayout title="ShareFile | Settings">
       <h1 className="mb-4 text-4xl font-bold tracking-tighter">Settings</h1>
       <div className="mb-8 grid grid-cols-3 gap-4">
         <div className="p-4 border border-zinc-900 rounded-lg">
