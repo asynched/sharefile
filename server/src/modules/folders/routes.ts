@@ -8,7 +8,7 @@ import { folders } from 'src/database/schema/folders'
 import { authenticated } from 'src/modules/auth/middlewares'
 import { logger } from 'src/services/logger'
 import { storage } from 'src/services/storage'
-import { TypeOf, z } from 'zod'
+import { type TypeOf, z } from 'zod'
 
 export const router = new Hono()
 
@@ -29,6 +29,22 @@ router.get('/:id', authenticated, async (c) => {
     .where(
       and(eq(folders.userId, c.var.userId), eq(folders.id, c.req.param('id')))
     )
+    .limit(1)
+
+  if (!folder) {
+    throw new HTTPException(404, {
+      message: 'Folder not found',
+    })
+  }
+
+  return c.json(folder)
+})
+
+router.get('/:id/public', async (c) => {
+  const [folder] = await db
+    .select()
+    .from(folders)
+    .where(and(eq(folders.id, c.req.param('id')), eq(folders.public, true)))
     .limit(1)
 
   if (!folder) {
@@ -100,11 +116,7 @@ router.put(
   }
 )
 
-const delay = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms))
-
 router.patch('/:id/visibility', authenticated, async (c) => {
-  await delay(1_000)
-
   const [folder] = await db
     .select()
     .from(folders)

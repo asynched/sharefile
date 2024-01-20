@@ -75,3 +75,22 @@ export async function deleteFile(folderId: string, fileId: string) {
     throw new Error('Could not delete file')
   }
 }
+
+export async function getPublicFiles(folderId: string) {
+  const response = await fetch(`${API_URL}/files/${folderId}/public`, {
+    headers: authHeaders(),
+  })
+
+  if (!response.ok) {
+    throw new Error('Could not fetch files')
+  }
+
+  const data: AppFile[] = await response.json()
+
+  data.forEach((file) => {
+    file.createdAt = new Date(file.createdAt)
+    file.updatedAt = new Date(file.updatedAt)
+  })
+
+  return data
+}

@@ -11,11 +11,16 @@ import DashboardFolderDetail from 'src/pages/dashboard/folders/[id]'
 import Settings from 'src/pages/dashboard/settings'
 import SignUp from 'src/pages/auth/sign-up'
 import SignIn from 'src/pages/auth/sign-in'
+import PublicFolderDetails from 'src/pages/folders/[id]'
 
 const router = createBrowserRouter([
   {
     path: '/',
     element: <Home />,
+  },
+  {
+    path: '/folders/:folderId',
+    element: <PublicFolderDetails />,
   },
   {
     path: '/auth/sign-up',

@@ -58,6 +58,29 @@ router.get('/:folderId', authenticated, async (c) => {
   return c.json(rows)
 })
 
+router.get('/:folderId/public', async (c) => {
+  const rows = await db
+    .select({
+      id: files.id,
+      name: files.name,
+      url: files.url,
+      size: files.size,
+      userId: files.userId,
+      folderId: files.folderId,
+      folder: folders.name,
+      createdAt: files.createdAt,
+      updatedAt: files.updatedAt,
+    })
+    .from(files)
+    .where(
+      and(eq(files.folderId, c.req.param('folderId')), eq(folders.public, true))
+    )
+    .innerJoin(folders, eq(files.folderId, folders.id))
+    .orderBy(desc(files.updatedAt))
+
+  return c.json(rows)
+})
+
 router.post('/:folderId', authenticated, async (c) => {
   const form = await c.req.formData()
 

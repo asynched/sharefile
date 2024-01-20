@@ -110,3 +110,18 @@ export async function deleteFolder(id: string) {
     throw new Error('Error deleting folder')
   }
 }
+
+export async function getPublicFolder(folderId: string) {
+  const response = await fetch(`${API_URL}/folders/${folderId}/public`)
+
+  if (!response.ok) {
+    throw new Error('Error fetching public folder')
+  }
+
+  const folder: AppFolder = await response.json()
+
+  folder.createdAt = new Date(folder.createdAt)
+  folder.updatedAt = new Date(folder.updatedAt)
+
+  return folder
+}
